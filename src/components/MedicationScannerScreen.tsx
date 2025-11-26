@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Camera, AlertTriangle, Scan, X, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -98,39 +98,10 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
   };
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-[#EDEDED]">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onNavigate('landing')}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h2 className="text-white">Medication Scanner</h2>
-          </div>
-          {!scanned && scannerState === 'idle' && (
-            <button
-              onClick={() => {
-                setArMode(!arMode);
-                setScannerState('idle');
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
-            >
-              <Scan className="w-4 h-4" />
-              <span className="text-sm">{arMode ? 'Camera' : 'AR'}</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {/* Camera State - Live Camera View */}
-        {scannerState === 'camera' && (
-          <div className="relative h-[100dvh] w-full overflow-hidden bg-black">
+    <div className="flex flex-col h-full w-full overflow-hidden bg-[#EDEDED] relative">
+      {/* Camera State - Full Screen Overlay */}
+      {scannerState === 'camera' && (
+        <div className="absolute inset-0 z-50 bg-black">
             {/* Video Element */}
             <div className="absolute inset-0">
               <video
@@ -180,12 +151,12 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             >
               <div className="w-full h-full rounded-full bg-white"></div>
             </button>
-          </div>
-        )}
+        </div>
+      )}
 
-        {/* Review State - Captured Image Preview */}
-        {scannerState === 'review' && capturedImage && (
-          <div className="relative h-[100dvh] w-full overflow-hidden bg-black flex flex-col">
+      {/* Review State - Full Screen Overlay */}
+      {scannerState === 'review' && capturedImage && (
+        <div className="absolute inset-0 z-50 bg-black flex flex-col">
             {/* Captured Image */}
             <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
               <img
@@ -212,11 +183,42 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 Use Photo
               </Button>
             </div>
-          </div>
-        )}
+        </div>
+      )}
 
-        {/* Idle State - Camera Frame or AR View */}
-        {scannerState === 'idle' && !scanned && !arMode && (
+      {/* Normal Layout - Header and Content */}
+      {scannerState === 'idle' && (
+        <>
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => onNavigate('landing')}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <h2 className="text-white">Medication Scanner</h2>
+              </div>
+              {!scanned && (
+                <button
+                  onClick={() => {
+                    setArMode(!arMode);
+                  }}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                >
+                  <Scan className="w-4 h-4" />
+                  <span className="text-sm">{arMode ? 'Camera' : 'AR'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {/* Idle State - Camera Frame or AR View */}
+            {!scanned && !arMode && (
           <div className="mb-6">
             <div className="relative bg-gray-800 rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto shadow-lg">
               {/* Camera viewfinder effect */}
@@ -247,9 +249,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
           </div>
         )}
 
-        {/* AR Mode View */}
-        {!scanned && arMode && (
-          <div className="mb-6">
+            {/* AR Mode View */}
+            {!scanned && arMode && (
+              <div className="mb-6">
             <div className="relative bg-gradient-to-br from-blue-900 to-purple-900 rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto shadow-lg">
               {/* AR Grid Effect */}
               <div className="absolute inset-0 opacity-30">
@@ -308,9 +310,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
           </div>
         )}
 
-        {/* Scan Result Card */}
-        {scanned && (
-          <div className="space-y-4 max-w-sm mx-auto">
+            {/* Scan Result Card */}
+            {scanned && (
+              <div className="space-y-4 max-w-sm mx-auto">
             <Card className="shadow-lg border-2 border-teal-200">
               <CardHeader className="bg-gradient-to-r from-teal-50 to-blue-50">
                 <CardTitle className="flex items-center gap-2 text-teal-800">
@@ -391,13 +393,15 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             </div>
           </div>
         )}
-      </div>
+          </div>
+
+          {/* Bottom Navigation */}
+          <BottomNav onNavigate={onNavigate} activeScreen="scanner" />
+        </>
+      )}
 
       {/* Hidden canvas for capturing video frames */}
       <canvas ref={canvasRef} className="hidden" />
-
-      {/* Bottom Navigation */}
-      <BottomNav onNavigate={onNavigate} activeScreen="scanner" />
     </div>
   );
 }

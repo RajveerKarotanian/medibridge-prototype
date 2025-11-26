@@ -98,7 +98,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#EDEDED]">
+    <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-[#EDEDED]">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
         <div className="flex items-center justify-between">
@@ -130,9 +130,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
       <div className="flex-1 overflow-y-auto p-4">
         {/* Camera State - Live Camera View */}
         {scannerState === 'camera' && (
-          <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden">
             {/* Video Element */}
-            <div className="flex-1 relative">
+            <div className="absolute inset-0">
               <video
                 ref={videoRef}
                 autoPlay
@@ -153,16 +153,11 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 </div>
                 
                 {/* Instruction text with drop shadow */}
-                <div className="absolute top-20 left-0 right-0 text-center">
+                <div className="absolute top-20 left-0 right-0 text-center z-10">
                   <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
                 </div>
-              </div>
-            </div>
 
-            {/* Controls */}
-            <div className="bg-black/80 p-6 pb-8">
-              <div className="flex items-center justify-center gap-6">
-                {/* Cancel button */}
+                {/* Exit button - Top right corner */}
                 <button
                   onClick={() => {
                     if (streamRef.current) {
@@ -171,31 +166,28 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                     }
                     setScannerState('idle');
                   }}
-                  className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                  className="absolute top-4 right-4 z-50 w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
                 >
                   <X className="w-6 h-6 text-white" />
                 </button>
-
-                {/* Shutter button */}
-                <button
-                  onClick={handleCapture}
-                  className="w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
-                >
-                  <div className="w-full h-full rounded-full bg-white"></div>
-                </button>
-
-                {/* Spacer for symmetry */}
-                <div className="w-12 h-12"></div>
               </div>
             </div>
+
+            {/* Shutter button - Fixed to bottom center */}
+            <button
+              onClick={handleCapture}
+              className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+            >
+              <div className="w-full h-full rounded-full bg-white"></div>
+            </button>
           </div>
         )}
 
         {/* Review State - Captured Image Preview */}
         {scannerState === 'review' && capturedImage && (
-          <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden flex flex-col">
             {/* Captured Image */}
-            <div className="flex-1 relative flex items-center justify-center bg-black">
+            <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
               <img
                 src={capturedImage}
                 alt="Captured medication"
@@ -203,8 +195,8 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               />
             </div>
 
-            {/* Action Buttons */}
-            <div className="bg-black/90 p-6 pb-8">
+            {/* Action Buttons - Fixed to bottom */}
+            <div className="fixed bottom-0 left-0 right-0 bg-black/90 p-6 pb-8 z-50 safe-area-inset-bottom">
               <div className="flex gap-4 max-w-sm mx-auto">
                 <Button
                   onClick={handleRetake}

@@ -140,34 +140,21 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 className="w-full h-full object-cover"
               />
               
-              {/* Overlay with transparent cutout */}
+              {/* Overlay with transparent cutout - Focus Cutout effect */}
               <div className="absolute inset-0">
-                {/* Top overlay */}
-                <div className="absolute top-0 left-0 right-0 h-[16.67%] bg-black/50"></div>
-                {/* Bottom overlay */}
-                <div className="absolute bottom-0 left-0 right-0 h-[16.67%] bg-black/50"></div>
-                {/* Left overlay */}
-                <div className="absolute top-[16.67%] bottom-[16.67%] left-0 w-[12.5%] bg-black/50"></div>
-                {/* Right overlay */}
-                <div className="absolute top-[16.67%] bottom-[16.67%] right-0 w-[12.5%] bg-black/50"></div>
-                
-                {/* Scan frame with corner brackets */}
+                {/* Focus cutout box with massive border technique */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-3/4 h-2/3">
-                    {/* Border frame */}
-                    <div className="absolute inset-0 border-4 border-white rounded-lg"></div>
-                    
-                    {/* Corner brackets for guidance */}
-                    <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-teal-400 rounded-tl-lg"></div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-teal-400 rounded-tr-lg"></div>
-                    <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-teal-400 rounded-bl-lg"></div>
-                    <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-teal-400 rounded-br-lg"></div>
-                  </div>
+                  <div 
+                    className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
+                    style={{
+                      boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
+                    }}
+                  ></div>
                 </div>
                 
-                {/* Instruction text */}
+                {/* Instruction text with drop shadow */}
                 <div className="absolute top-20 left-0 right-0 text-center">
-                  <p className="text-white text-lg font-medium">Position medication label in frame</p>
+                  <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
                 </div>
               </div>
             </div>
@@ -221,15 +208,14 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               <div className="flex gap-4 max-w-sm mx-auto">
                 <Button
                   onClick={handleRetake}
-                  variant="outline"
-                  className="flex-1 h-14 rounded-xl border-2 border-white text-white hover:bg-white/10"
+                  className="flex-1 h-14 rounded-xl bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50"
                 >
                   <X className="w-5 h-5 mr-2" />
                   Retake
                 </Button>
                 <Button
                   onClick={handleUsePhoto}
-                  className="flex-1 h-14 bg-teal-600 hover:bg-teal-700 text-white rounded-xl"
+                  className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
                 >
                   <Check className="w-5 h-5 mr-2" />
                   Use Photo

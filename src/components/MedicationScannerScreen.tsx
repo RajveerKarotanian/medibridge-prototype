@@ -130,7 +130,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
       <div className="flex-1 overflow-y-auto p-4">
         {/* Camera State - Live Camera View */}
         {scannerState === 'camera' && (
-          <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden">
+          <div className="relative h-[100dvh] w-full overflow-hidden bg-black">
             {/* Video Element */}
             <div className="absolute inset-0">
               <video
@@ -166,17 +166,17 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                     }
                     setScannerState('idle');
                   }}
-                  className="absolute top-4 right-4 z-50 w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
+                  className="absolute top-6 right-6 z-50 p-2 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
                 >
                   <X className="w-6 h-6 text-white" />
                 </button>
               </div>
             </div>
 
-            {/* Shutter button - Fixed to bottom center */}
+            {/* Shutter button - Responsive positioning */}
             <button
               onClick={handleCapture}
-              className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+              className="absolute bottom-10 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-10 landscape:top-1/2 landscape:-translate-y-1/2 landscape:translate-x-0 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
             >
               <div className="w-full h-full rounded-full bg-white"></div>
             </button>
@@ -185,7 +185,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
 
         {/* Review State - Captured Image Preview */}
         {scannerState === 'review' && capturedImage && (
-          <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden flex flex-col">
+          <div className="relative h-[100dvh] w-full overflow-hidden bg-black flex flex-col">
             {/* Captured Image */}
             <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
               <img
@@ -195,24 +195,22 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               />
             </div>
 
-            {/* Action Buttons - Fixed to bottom */}
-            <div className="fixed bottom-0 left-0 right-0 bg-black/90 p-6 pb-8 z-50 safe-area-inset-bottom">
-              <div className="flex gap-4 max-w-sm mx-auto">
-                <Button
-                  onClick={handleRetake}
-                  className="flex-1 h-14 rounded-xl bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50"
-                >
-                  <X className="w-5 h-5 mr-2" />
-                  Retake
-                </Button>
-                <Button
-                  onClick={handleUsePhoto}
-                  className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
-                >
-                  <Check className="w-5 h-5 mr-2" />
-                  Use Photo
-                </Button>
-              </div>
+            {/* Action Buttons - Responsive positioning */}
+            <div className="absolute bottom-10 left-0 right-0 w-full flex justify-center gap-4 landscape:bottom-auto landscape:top-1/2 landscape:right-10 landscape:left-auto landscape:w-auto landscape:flex-col landscape:-translate-y-1/2 z-50 px-4 max-w-sm mx-auto landscape:max-w-none">
+              <Button
+                onClick={handleRetake}
+                className="flex-1 h-14 rounded-xl bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50 landscape:flex-none landscape:w-32"
+              >
+                <X className="w-5 h-5 mr-2" />
+                Retake
+              </Button>
+              <Button
+                onClick={handleUsePhoto}
+                className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-xl landscape:flex-none landscape:w-32"
+              >
+                <Check className="w-5 h-5 mr-2" />
+                Use Photo
+              </Button>
             </div>
           </div>
         )}

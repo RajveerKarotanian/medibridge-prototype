@@ -101,88 +101,99 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
     <div className="flex flex-col h-full w-full overflow-hidden bg-[#EDEDED] relative">
       {/* Camera State - Full Screen Overlay */}
       {scannerState === 'camera' && (
-        <div className="absolute inset-0 z-50 bg-black">
-            {/* Video Element */}
-            <div className="absolute inset-0">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-              />
-              
-              {/* Overlay with transparent cutout - Focus Cutout effect */}
-              <div className="absolute inset-0">
-                {/* Focus cutout box with massive border technique */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div 
-                    className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
-                    style={{
-                      boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
-                    }}
-                  ></div>
-                </div>
-                
-                {/* Instruction text with drop shadow */}
-                <div className="absolute top-20 left-0 right-0 text-center z-10">
-                  <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
-                </div>
-
-                {/* Exit button - Top right corner */}
-                <button
-                  onClick={() => {
-                    if (streamRef.current) {
-                      streamRef.current.getTracks().forEach(track => track.stop());
-                      streamRef.current = null;
-                    }
-                    setScannerState('idle');
-                  }}
-                  className="absolute top-6 right-6 z-50 p-2 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
-                >
-                  <X className="w-6 h-6 text-white" />
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 bg-black">
+          {/* Video Element */}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="w-full h-full object-cover"
+          />
+          
+          {/* Overlay with transparent cutout - Focus Cutout effect */}
+          <div className="absolute inset-0">
+            {/* Focus cutout box with massive border technique */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div 
+                className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
+                style={{
+                  boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
+                }}
+              ></div>
+            </div>
+            
+            {/* Instruction text with drop shadow */}
+            <div className="absolute top-20 left-0 right-0 text-center z-10">
+              <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
             </div>
 
-            {/* Shutter button - Responsive positioning */}
+            {/* Exit button - Top right corner */}
             <button
-              onClick={handleCapture}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-10 landscape:top-1/2 landscape:-translate-y-1/2 landscape:translate-x-0 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+              onClick={() => {
+                if (streamRef.current) {
+                  streamRef.current.getTracks().forEach(track => track.stop());
+                  streamRef.current = null;
+                }
+                setScannerState('idle');
+              }}
+              className="absolute top-8 right-6 z-50 p-3 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
             >
-              <div className="w-full h-full rounded-full bg-white"></div>
+              <X className="w-6 h-6 text-white" />
             </button>
+          </div>
+
+          {/* Shutter button - Centered at bottom */}
+          <button
+            onClick={handleCapture}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+          >
+            <div className="w-full h-full rounded-full bg-white"></div>
+          </button>
         </div>
       )}
 
       {/* Review State - Full Screen Overlay */}
       {scannerState === 'review' && capturedImage && (
-        <div className="absolute inset-0 z-50 bg-black flex flex-col">
-            {/* Captured Image */}
-            <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
-              <img
-                src={capturedImage}
-                alt="Captured medication"
-                className="max-w-full max-h-full object-contain"
-              />
-            </div>
+        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+          {/* Captured Image */}
+          <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
+            <img
+              src={capturedImage}
+              alt="Captured medication"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
 
-            {/* Action Buttons - Responsive positioning */}
-            <div className="absolute bottom-10 left-0 right-0 w-full flex justify-center gap-4 landscape:bottom-auto landscape:top-1/2 landscape:right-10 landscape:left-auto landscape:w-auto landscape:flex-col landscape:-translate-y-1/2 z-50 px-4 max-w-sm mx-auto landscape:max-w-none">
+          {/* Exit button - Top right corner */}
+          <button
+            onClick={() => {
+              setCapturedImage(null);
+              setScannerState('idle');
+            }}
+            className="absolute top-8 right-6 z-50 p-3 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+
+          {/* Action Buttons - Pinned to bottom with dark gradient */}
+          <div className="absolute bottom-0 left-0 right-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent z-50">
+            <div className="flex justify-center gap-4 max-w-sm mx-auto">
               <Button
                 onClick={handleRetake}
-                className="flex-1 h-14 rounded-xl bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50 landscape:flex-none landscape:w-32"
+                className="flex-1 h-14 rounded-xl bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50"
               >
                 <X className="w-5 h-5 mr-2" />
                 Retake
               </Button>
               <Button
                 onClick={handleUsePhoto}
-                className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-xl landscape:flex-none landscape:w-32"
+                className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
               >
                 <Check className="w-5 h-5 mr-2" />
                 Use Photo
               </Button>
             </div>
+          </div>
         </div>
       )}
 

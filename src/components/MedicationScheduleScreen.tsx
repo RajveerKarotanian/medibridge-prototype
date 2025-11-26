@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import { ArrowLeft, Bell, Plus, Edit, Trash2, Clock, AlertCircle, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { BottomNav } from './BottomNav';
-import { useState } from 'react';
 
 interface MedicationScheduleScreenProps {
   onNavigate: (screen: string) => void;

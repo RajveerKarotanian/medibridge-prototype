@@ -1,9 +1,9 @@
+import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Camera, AlertTriangle, Scan, X, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { BottomNav } from './BottomNav';
 import { Badge } from './ui/badge';
-import { useState, useRef, useEffect } from 'react';
 
 interface MedicationScannerScreenProps {
   onNavigate: (screen: string, data?: any) => void;

@@ -1,10 +1,10 @@
+import React, { useState } from 'react';
 import { Mic, Type, Bell, Languages, Clock, Pill, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { useState } from 'react';
-import logo from 'figma:asset/c2ec26e9729de313688a96d37dc96cda542f9a54.png';
+import logo from '../assets/c2ec26e9729de313688a96d37dc96cda542f9a54.png';
 
 interface LandingScreenProps {
   onNavigate: (screen: string) => void;

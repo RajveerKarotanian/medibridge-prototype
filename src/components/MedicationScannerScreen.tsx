@@ -1,0 +1,427 @@
+import { ArrowLeft, Camera, AlertTriangle, Scan, X, Check } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { BottomNav } from './BottomNav';
+import { Badge } from './ui/badge';
+import { useState, useRef, useEffect } from 'react';
+
+interface MedicationScannerScreenProps {
+  onNavigate: (screen: string, data?: any) => void;
+}
+
+type ScannerState = 'idle' | 'camera' | 'review';
+
+export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenProps) {
+  const [scanned, setScanned] = useState(false);
+  const [arMode, setArMode] = useState(false);
+  const [scannerState, setScannerState] = useState<ScannerState>('idle');
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Initialize camera when entering camera state
+  useEffect(() => {
+    if (scannerState === 'camera') {
+      const startCamera = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+          });
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (error) {
+          console.error('Error accessing camera:', error);
+          // Fallback: return to idle state if camera access fails
+          setScannerState('idle');
+        }
+      };
+      startCamera();
+    }
+
+    // Cleanup: stop camera when leaving camera state
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [scannerState]);
+
+  const handleCapture = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Set canvas dimensions to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Draw current video frame to canvas
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0);
+        
+        // Convert to image URL
+        const imageUrl = canvas.toDataURL('image/jpeg');
+        setCapturedImage(imageUrl);
+        
+        // Stop camera stream
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+        }
+        
+        // Move to review state
+        setScannerState('review');
+      }
+    }
+  };
+
+  const handleRetake = () => {
+    setCapturedImage(null);
+    setScannerState('camera');
+  };
+
+  const handleUsePhoto = () => {
+    // This triggers the same flow as the original "Scan Medication" button
+    setScanned(true);
+    setScannerState('idle');
+    setCapturedImage(null);
+  };
+
+  const handleStartScan = () => {
+    setScannerState('camera');
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-[#EDEDED]">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onNavigate('landing')}
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h2 className="text-white">Medication Scanner</h2>
+          </div>
+          {!scanned && scannerState === 'idle' && (
+            <button
+              onClick={() => {
+                setArMode(!arMode);
+                setScannerState('idle');
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+            >
+              <Scan className="w-4 h-4" />
+              <span className="text-sm">{arMode ? 'Camera' : 'AR'}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {/* Camera State - Live Camera View */}
+        {scannerState === 'camera' && (
+          <div className="fixed inset-0 bg-black z-50 flex flex-col">
+            {/* Video Element */}
+            <div className="flex-1 relative">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Overlay with transparent cutout */}
+              <div className="absolute inset-0">
+                {/* Top overlay */}
+                <div className="absolute top-0 left-0 right-0 h-[16.67%] bg-black/50"></div>
+                {/* Bottom overlay */}
+                <div className="absolute bottom-0 left-0 right-0 h-[16.67%] bg-black/50"></div>
+                {/* Left overlay */}
+                <div className="absolute top-[16.67%] bottom-[16.67%] left-0 w-[12.5%] bg-black/50"></div>
+                {/* Right overlay */}
+                <div className="absolute top-[16.67%] bottom-[16.67%] right-0 w-[12.5%] bg-black/50"></div>
+                
+                {/* Scan frame with corner brackets */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-3/4 h-2/3">
+                    {/* Border frame */}
+                    <div className="absolute inset-0 border-4 border-white rounded-lg"></div>
+                    
+                    {/* Corner brackets for guidance */}
+                    <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-teal-400 rounded-tl-lg"></div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-teal-400 rounded-tr-lg"></div>
+                    <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-teal-400 rounded-bl-lg"></div>
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-teal-400 rounded-br-lg"></div>
+                  </div>
+                </div>
+                
+                {/* Instruction text */}
+                <div className="absolute top-20 left-0 right-0 text-center">
+                  <p className="text-white text-lg font-medium">Position medication label in frame</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="bg-black/80 p-6 pb-8">
+              <div className="flex items-center justify-center gap-6">
+                {/* Cancel button */}
+                <button
+                  onClick={() => {
+                    if (streamRef.current) {
+                      streamRef.current.getTracks().forEach(track => track.stop());
+                      streamRef.current = null;
+                    }
+                    setScannerState('idle');
+                  }}
+                  className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+
+                {/* Shutter button */}
+                <button
+                  onClick={handleCapture}
+                  className="w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+                >
+                  <div className="w-full h-full rounded-full bg-white"></div>
+                </button>
+
+                {/* Spacer for symmetry */}
+                <div className="w-12 h-12"></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Review State - Captured Image Preview */}
+        {scannerState === 'review' && capturedImage && (
+          <div className="fixed inset-0 bg-black z-50 flex flex-col">
+            {/* Captured Image */}
+            <div className="flex-1 relative flex items-center justify-center bg-black">
+              <img
+                src={capturedImage}
+                alt="Captured medication"
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="bg-black/90 p-6 pb-8">
+              <div className="flex gap-4 max-w-sm mx-auto">
+                <Button
+                  onClick={handleRetake}
+                  variant="outline"
+                  className="flex-1 h-14 rounded-xl border-2 border-white text-white hover:bg-white/10"
+                >
+                  <X className="w-5 h-5 mr-2" />
+                  Retake
+                </Button>
+                <Button
+                  onClick={handleUsePhoto}
+                  className="flex-1 h-14 bg-teal-600 hover:bg-teal-700 text-white rounded-xl"
+                >
+                  <Check className="w-5 h-5 mr-2" />
+                  Use Photo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Idle State - Camera Frame or AR View */}
+        {scannerState === 'idle' && !scanned && !arMode && (
+          <div className="mb-6">
+            <div className="relative bg-gray-800 rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto shadow-lg">
+              {/* Camera viewfinder effect */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative w-3/4 h-3/4">
+                  {/* Corner brackets */}
+                  <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-teal-400"></div>
+                  <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-teal-400"></div>
+                  <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-teal-400"></div>
+                  <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-teal-400"></div>
+                </div>
+                <Camera className="w-16 h-16 text-gray-600 absolute" />
+              </div>
+              <p className="absolute bottom-6 left-0 right-0 text-center text-white">
+                Position medication label in frame
+              </p>
+            </div>
+
+            <div className="mt-6 max-w-sm mx-auto">
+              <Button
+                onClick={handleStartScan}
+                className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-md"
+              >
+                <Camera className="w-5 h-5 mr-2" />
+                Scan Medication
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* AR Mode View */}
+        {!scanned && arMode && (
+          <div className="mb-6">
+            <div className="relative bg-gradient-to-br from-blue-900 to-purple-900 rounded-2xl overflow-hidden aspect-square max-w-sm mx-auto shadow-lg">
+              {/* AR Grid Effect */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="grid grid-cols-8 grid-rows-8 h-full w-full">
+                  {Array.from({ length: 64 }).map((_, i) => (
+                    <div key={i} className="border border-teal-400"></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AR Target Box */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative w-2/3 h-2/3 border-2 border-teal-400 rounded-lg animate-pulse">
+                  {/* Corner markers */}
+                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-white rounded-tl"></div>
+                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-white rounded-tr"></div>
+                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-white rounded-bl"></div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-white rounded-br"></div>
+                  
+                  {/* Scanning line */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-teal-400 animate-scan"></div>
+                </div>
+              </div>
+
+              {/* AR Info Overlay */}
+              <div className="absolute top-4 left-4 right-4">
+                <Badge className="bg-teal-500 text-white">
+                  AR Mode Active
+                </Badge>
+              </div>
+
+              <p className="absolute bottom-6 left-0 right-0 text-center text-white">
+                Move device to detect medication
+              </p>
+            </div>
+
+            <div className="mt-6 max-w-sm mx-auto space-y-3">
+              <Button
+                onClick={handleStartScan}
+                className="w-full h-14 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white rounded-2xl shadow-md"
+              >
+                <Scan className="w-5 h-5 mr-2" />
+                Scan with AR
+              </Button>
+              
+              {/* AR Instructions */}
+              <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-900">
+                <p className="mb-1">💡 AR Tips:</p>
+                <ul className="space-y-1 text-xs text-blue-700">
+                  <li>• Point at medication label</li>
+                  <li>• Keep device steady</li>
+                  <li>• Ensure good lighting</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Scan Result Card */}
+        {scanned && (
+          <div className="space-y-4 max-w-sm mx-auto">
+            <Card className="shadow-lg border-2 border-teal-200">
+              <CardHeader className="bg-gradient-to-r from-teal-50 to-blue-50">
+                <CardTitle className="flex items-center gap-2 text-teal-800">
+                  <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  Atorvastatin
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div>
+                  <p className="text-teal-700 mb-1">Purpose:</p>
+                  <p className="text-gray-700">Lowers cholesterol</p>
+                </div>
+
+                <div>
+                  <p className="text-teal-700 mb-1">Dosage:</p>
+                  <p className="text-gray-700">1 tablet daily</p>
+                </div>
+
+                <div>
+                  <p className="text-teal-700 mb-1">Side Effects:</p>
+                  <p className="text-gray-700">Possible muscle pain or fatigue</p>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-amber-900 mb-1">Warning:</p>
+                      <p className="text-amber-800">Avoid grapefruit juice</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setScanned(false)}
+                variant="outline"
+                className="flex-1 h-12 rounded-xl border-2 border-gray-300"
+              >
+                Scan Again
+              </Button>
+              <Button
+                onClick={() => {
+                  // Create medication data object for Atorvastatin
+                  const medicationData = {
+                    name: 'Atorvastatin',
+                    dosage: '20mg Tablets',
+                    frequency: 'Once daily',
+                    time: '8:00 AM',
+                    status: 'Active',
+                    purpose: 'Lowers cholesterol and reduces risk of heart disease',
+                    sideEffects: 'Possible muscle pain, fatigue, headache',
+                    warnings: 'Avoid grapefruit juice while taking this medication',
+                    instructions: 'Take 1 tablet daily with or without food'
+                  };
+                  onNavigate('scan-result', medicationData);
+                }}
+                className="flex-1 h-12 bg-teal-600 hover:bg-teal-700 text-white rounded-xl"
+              >
+                View Details
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Hidden canvas for capturing video frames */}
+      <canvas ref={canvasRef} className="hidden" />
+
+      {/* Bottom Navigation */}
+      <BottomNav onNavigate={onNavigate} activeScreen="scanner" />
+    </div>
+  );
+}

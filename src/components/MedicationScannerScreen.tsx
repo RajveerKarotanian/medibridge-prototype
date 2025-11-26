@@ -101,7 +101,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
     <div className="flex flex-col h-full w-full overflow-hidden bg-[#EDEDED] relative">
       {/* Camera State - Full Screen Overlay */}
       {scannerState === 'camera' && (
-        <div className="fixed inset-0 z-50 bg-black">
+        <div className="fixed inset-0 h-[100dvh] w-full z-50 bg-black">
           {/* Video Element */}
           <video
             ref={videoRef}
@@ -142,10 +142,10 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             </button>
           </div>
 
-          {/* Shutter button - Centered at bottom */}
+          {/* Shutter button - Lifted higher for mobile visibility */}
           <button
             onClick={handleCapture}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-50 w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-[60] w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
           >
             <div className="w-full h-full rounded-full bg-white"></div>
           </button>
@@ -154,7 +154,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
 
       {/* Review State - Full Screen Overlay */}
       {scannerState === 'review' && capturedImage && (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+        <div className="fixed inset-0 h-[100dvh] w-full z-50 bg-black flex flex-col">
           {/* Captured Image */}
           <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
             <img
@@ -175,8 +175,8 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             <X className="w-6 h-6 text-white" />
           </button>
 
-          {/* Action Buttons - Pinned to bottom with dark gradient */}
-          <div className="absolute bottom-0 left-0 right-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent z-50">
+          {/* Action Buttons - Lifted up for mobile visibility with dark gradient */}
+          <div className="absolute bottom-12 left-0 right-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent z-[60]">
             <div className="flex justify-center gap-4 max-w-sm mx-auto">
               <Button
                 onClick={handleRetake}

@@ -130,18 +130,18 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             {/* --- MIDDLE SECTION: THE FRAME --- */}
             {/* flex-1 pushes the top and bottom sections apart, centering this div */}
             <div className="flex-1 flex items-center justify-center p-8">
-               <div className="relative w-full max-w-xs aspect-[3/4] sm:w-80 sm:h-96 border-2 border-white/80 rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-                  {/* Corner Brackets (White) */}
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-[4px] border-l-[4px] border-white -mt-[2px] -ml-[2px]"></div>
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-[4px] border-r-[4px] border-white -mt-[2px] -mr-[2px]"></div>
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[4px] border-l-[4px] border-white -mb-[2px] -ml-[2px]"></div>
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[4px] border-r-[4px] border-white -mb-[2px] -mr-[2px]"></div>
+               <div className="relative w-full max-w-xs aspect-[3/4] sm:w-80 sm:h-96 border-4 border-white/30 rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                  {/* Corner Brackets (White & Thick) */}
+                  <div className="absolute top-0 left-0 w-12 h-12 border-t-[6px] border-l-[6px] border-white -mt-[3px] -ml-[3px] rounded-tl-lg"></div>
+                  <div className="absolute top-0 right-0 w-12 h-12 border-t-[6px] border-r-[6px] border-white -mt-[3px] -mr-[3px] rounded-tr-lg"></div>
+                  <div className="absolute bottom-0 left-0 w-12 h-12 border-b-[6px] border-l-[6px] border-white -mb-[3px] -ml-[3px] rounded-bl-lg"></div>
+                  <div className="absolute bottom-0 right-0 w-12 h-12 border-b-[6px] border-r-[6px] border-white -mb-[3px] -mr-[3px] rounded-br-lg"></div>
                </div>
             </div>
 
             {/* --- BOTTOM SECTION: SHUTTER BUTTON --- */}
             {/* pointer-events-auto ensures the button area captures clicks */}
-            <div className="h-32 flex items-start justify-center pt-2 bg-gradient-to-t from-black/60 to-transparent pointer-events-auto">
+            <div className="h-40 flex items-start justify-center pt-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-auto">
                <button
                   onClick={handleCapture}
                   className="

@@ -73,13 +73,14 @@ export function MedicationScanResultScreen({ onNavigate, medication }: Medicatio
               <p className="text-gray-600">{medicationData.dosage}</p>
             </div>
 
-            {/* RED ALERT - Liver Damage Warning */}
-            <div className="bg-red-600 text-white rounded-xl p-5 shadow-lg border-4 border-red-700">
+            {/* RED ALERT - FIXED COLORS */}
+            {/* Changed bg-red-600 to hex code to force color */}
+            <div className="bg-[#DC2626] text-white rounded-xl p-5 shadow-lg border-4 border-[#991B1B]">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1" />
+                <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1 text-white" />
                 <div>
-                  <p className="mb-2">LIVER DAMAGE WARNING</p>
-                  <p className="text-red-100">
+                  <p className="mb-2 font-bold text-white">LIVER DAMAGE WARNING</p>
+                  <p className="text-white/90">
                     {medicationData.warnings}
                   </p>
                 </div>

@@ -131,7 +131,8 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
         {/* Camera State - Live Camera View */}
         {scannerState === 'camera' && (
           <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden">
-            {/* 1. Video Layer */}
+            
+            {/* 1. Video & Overlay Layer */}
             <div className="absolute inset-0">
               <video
                 ref={videoRef}
@@ -140,7 +141,8 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 className="w-full h-full object-cover"
               />
               
-              {/* 2. Overlay Layer (Focus Box & Text) */}
+              {/* Dark Overlay with transparent cutout */}
+              {/* Added pointer-events-none so clicks pass through this layer */}
               <div className="absolute inset-0 pointer-events-none">
                 {/* Focus cutout box */}
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -157,7 +159,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                   <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
                 </div>
 
-                {/* Exit button - Note: pointer-events-auto added so it stays clickable */}
+                {/* Exit button - Re-enabled pointer events for this specific button */}
                 <button
                   onClick={() => {
                     if (streamRef.current) {
@@ -173,11 +175,12 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               </div>
             </div>
 
-            {/* 3. Controls Layer (Shutter Button) - Independent of video/overlay divs */}
-            <div className="absolute bottom-12 left-0 right-0 z-50 flex justify-center pointer-events-none">
+            {/* 2. Shutter Button Layer - OUTSIDE the video div */}
+            {/* High Z-index ensures it's on top. Flex ensures centering. */}
+            <div className="absolute bottom-6 left-0 right-0 z-[60] flex justify-center pb-safe">
               <button
                 onClick={handleCapture}
-                className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-transform active:scale-95 shadow-lg pointer-events-auto"
+                className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-transform active:scale-95 shadow-lg bg-transparent"
               >
                 <div className="w-16 h-16 rounded-full bg-white"></div>
               </button>

@@ -52,17 +52,21 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
+      
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+      
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(video, 0, 0);
         const imageUrl = canvas.toDataURL('image/jpeg');
         setCapturedImage(imageUrl);
+        
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
           streamRef.current = null;
         }
+        
         setScannerState('review');
       }
     }
@@ -86,13 +90,13 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
   return (
     <div className="flex flex-col h-full w-full bg-[#EDEDED] relative">
       
-      {/* --------------------------------------------------------------------------------
-         CAMERA STATE (Fixed Fullscreen Overlay)
-         -------------------------------------------------------------------------------- */}
+      {/* =======================================================================
+          CAMERA STATE (FULLSCREEN OVERLAY)
+         ======================================================================= */}
       {scannerState === 'camera' && (
         <div className="fixed inset-0 z-[9999] bg-black">
           
-          {/* LAYER 1: VIDEO (Background) */}
+          {/* 1. BACKGROUND VIDEO */}
           <video
             ref={videoRef}
             autoPlay
@@ -100,56 +104,49 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
-          {/* LAYER 2: LAYOUT GRID (The robust structure) */}
-          {/* This flex container fills the screen. 
-              Portrait: Column (Top Text, Middle Frame, Bottom Button).
-              Landscape: Row (Left Frame, Right Button). 
-          */}
-          <div className="absolute inset-0 z-10 flex flex-col landscape:flex-row pointer-events-none">
+          {/* 2. FLEX LAYOUT CONTAINER (The Structure) */}
+          {/* This ensures items are physically spaced Top -> Middle -> Bottom */}
+          <div className="absolute inset-0 z-10 flex flex-col pointer-events-none">
             
-            {/* SECTION A: TOP BAR (Text & Exit) */}
-            <div className="relative h-24 w-full landscape:h-full landscape:w-24 flex items-center justify-center bg-gradient-to-b from-black/60 to-transparent landscape:bg-gradient-to-r">
+            {/* --- TOP SECTION: TEXT & EXIT BUTTON --- */}
+            <div className="h-24 flex items-end justify-center relative pb-2 bg-gradient-to-b from-black/50 to-transparent">
                {/* Text */}
-               <div className="mt-4 landscape:mt-0 landscape:-rotate-90">
-                 <p className="text-white font-bold drop-shadow-md bg-black/30 px-4 py-1 rounded-full backdrop-blur-md whitespace-nowrap">
-                    Position medication in frame
-                 </p>
-               </div>
+               <p className="text-white text-lg font-medium drop-shadow-md px-4 py-1 bg-black/20 rounded-full backdrop-blur-sm border border-white/10">
+                  Position medication in frame
+               </p>
 
-               {/* Exit Button (Top Right in Portrait) */}
-               <div className="absolute top-6 right-6 pointer-events-auto">
-                 <button
-                    onClick={() => {
-                      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-                      setScannerState('idle');
-                    }}
-                    className="p-2 bg-black/40 rounded-full text-white backdrop-blur-md border border-white/20"
-                 >
-                    <X size={24} />
-                 </button>
+               {/* Exit Button (Top Left as requested) */}
+               <button
+                  onClick={() => {
+                    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+                    setScannerState('idle');
+                  }}
+                  className="absolute top-8 left-6 pointer-events-auto p-3 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/20 active:scale-95 transition-transform"
+               >
+                  <X size={24} />
+               </button>
+            </div>
+
+            {/* --- MIDDLE SECTION: THE FRAME --- */}
+            {/* flex-1 pushes the top and bottom sections apart, centering this div */}
+            <div className="flex-1 flex items-center justify-center p-8">
+               <div className="relative w-full max-w-xs aspect-[3/4] sm:w-80 sm:h-96 border-2 border-white/80 rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                  {/* Corner Brackets (White) */}
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-[4px] border-l-[4px] border-white -mt-[2px] -ml-[2px]"></div>
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-[4px] border-r-[4px] border-white -mt-[2px] -mr-[2px]"></div>
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[4px] border-l-[4px] border-white -mb-[2px] -ml-[2px]"></div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[4px] border-r-[4px] border-white -mb-[2px] -mr-[2px]"></div>
                </div>
             </div>
 
-            {/* SECTION B: MIDDLE (The Frame) */}
-            <div className="flex-1 flex items-center justify-center p-4">
-               {/* The White Box - Hardcoded dimensions prevent collapse */}
-               <div className="relative w-64 h-64 sm:w-80 sm:h-80 border-[4px] border-white rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-                 {/* Corner Markers */}
-                 <div className="absolute top-0 left-0 w-8 h-8 border-t-[6px] border-l-[6px] border-white -mt-[4px] -ml-[4px]"></div>
-                 <div className="absolute top-0 right-0 w-8 h-8 border-t-[6px] border-r-[6px] border-white -mt-[4px] -mr-[4px]"></div>
-                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[6px] border-l-[6px] border-white -mb-[4px] -ml-[4px]"></div>
-                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[6px] border-r-[6px] border-white -mb-[4px] -mr-[4px]"></div>
-               </div>
-            </div>
-
-            {/* SECTION C: BOTTOM BAR (The Button) */}
-            {/* Portrait: Height 32 (Footer). Landscape: Width 32 (Sidebar on Right). */}
-            <div className="h-32 w-full landscape:h-full landscape:w-32 flex items-center justify-center bg-gradient-to-t from-black/60 to-transparent landscape:bg-gradient-to-l pointer-events-auto">
+            {/* --- BOTTOM SECTION: SHUTTER BUTTON --- */}
+            {/* pointer-events-auto ensures the button area captures clicks */}
+            <div className="h-32 flex items-start justify-center pt-2 bg-gradient-to-t from-black/60 to-transparent pointer-events-auto">
                <button
                   onClick={handleCapture}
                   className="
-                    w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
-                    shadow-xl hover:scale-105 active:scale-95 transition-transform
+                    w-20 h-20 rounded-full bg-white border-[4px] border-gray-300
+                    shadow-2xl hover:scale-105 active:scale-95 transition-all
                     flex items-center justify-center cursor-pointer
                   "
                   aria-label="Take Picture"
@@ -163,9 +160,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
       )}
 
 
-      {/* --------------------------------------------------------------------------------
-         REVIEW STATE
-         -------------------------------------------------------------------------------- */}
+      {/* =======================================================================
+          REVIEW STATE
+         ======================================================================= */}
       {scannerState === 'review' && capturedImage && (
         <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
           <div className="flex-1 flex items-center justify-center p-4 bg-black">
@@ -184,9 +181,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
       )}
 
 
-      {/* --------------------------------------------------------------------------------
-         IDLE STATE (Dashboard)
-         -------------------------------------------------------------------------------- */}
+      {/* =======================================================================
+          IDLE STATE (Dashboard)
+         ======================================================================= */}
       {scannerState === 'idle' && (
         <>
           <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
@@ -209,6 +206,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             {!scanned && !arMode && (
               <div className="w-full max-w-sm mt-8 space-y-8">
                 <div className="relative aspect-square bg-gray-800 rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center">
+                   {/* Fake Viewfinder Graphic */}
                    <div className="w-3/4 h-3/4 border-4 border-gray-600 rounded-2xl relative">
                       <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal-400 -mt-1 -ml-1"></div>
                       <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal-400 -mt-1 -mr-1"></div>

@@ -52,21 +52,17 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(video, 0, 0);
         const imageUrl = canvas.toDataURL('image/jpeg');
         setCapturedImage(imageUrl);
-        
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
           streamRef.current = null;
         }
-        
         setScannerState('review');
       }
     }
@@ -89,13 +85,14 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
 
   return (
     <div className="flex flex-col h-full w-full bg-[#EDEDED] relative">
-      {/* =======================================================================
-        CAMERA STATE
-        =======================================================================
-      */}
+      
+      {/* --------------------------------------------------------------------------------
+         CAMERA STATE (Fixed Fullscreen Overlay)
+         -------------------------------------------------------------------------------- */}
       {scannerState === 'camera' && (
-        <div className="fixed inset-0 z-50 bg-black">
-          {/* 1. VIDEO LAYER (Background) */}
+        <div className="fixed inset-0 z-[9999] bg-black">
+          
+          {/* LAYER 1: VIDEO */}
           <video
             ref={videoRef}
             autoPlay
@@ -103,89 +100,82 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-          {/* 2. OVERLAY LAYER (Visuals only, pointer-events-none) */}
-          <div className="absolute inset-0 pointer-events-none z-10">
-            {/* The Frame: Centered Exactly */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] aspect-[3/4] max-w-sm border-2 border-white rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-               {/* Corner Markers */}
-               <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal-400 -mt-[2px] -ml-[2px]"></div>
-               <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal-400 -mt-[2px] -mr-[2px]"></div>
-               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-teal-400 -mb-[2px] -ml-[2px]"></div>
-               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-teal-400 -mb-[2px] -mr-[2px]"></div>
+          {/* LAYER 2: THE FRAME (Centered using Flexbox, Overlay created by Shadow) */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+            {/* The Frame Box - Hardcoded w-72 ensures it never collapses */}
+            <div className="relative w-72 h-72 border-2 border-white/50 rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+               {/* Teal Corner Markers */}
+               <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal-500 -mt-[2px] -ml-[2px]"></div>
+               <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal-500 -mt-[2px] -mr-[2px]"></div>
+               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-teal-500 -mb-[2px] -ml-[2px]"></div>
+               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-teal-500 -mb-[2px] -mr-[2px]"></div>
             </div>
-
-            {/* Instruction Text: Positioned BELOW the frame, but ABOVE the button area */}
-            <div className="absolute bottom-32 left-0 right-0 text-center">
-              <p className="text-white/90 text-lg font-medium drop-shadow-md bg-black/20 inline-block px-4 py-1 rounded-full backdrop-blur-sm">
-                Position medication in frame
-              </p>
+            
+            {/* Text - Pushed down by margin to sit under the frame */}
+            <div className="mt-8">
+               <p className="text-white text-lg font-bold drop-shadow-md tracking-wide bg-black/20 px-4 py-1 rounded-full">
+                  Position medication in frame
+               </p>
             </div>
           </div>
 
-          {/* 3. CONTROLS LAYER (Clickable Buttons) */}
-          {/* Shutter Button: Fixed to Bottom Center */}
-          <button
-            onClick={handleCapture}
-            className="
-              fixed z-[100] cursor-pointer
-              bottom-8 left-1/2 -translate-x-1/2
-              w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
-              shadow-xl hover:scale-105 active:scale-95 transition-transform
-              flex items-center justify-center
-              
-              /* Landscape override */
-              landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2
-            "
-            aria-label="Take Picture"
-          >
-            <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
-          </button>
+          {/* LAYER 3: CONTROLS (Pinned to edges, outside the flex layout) */}
+          
+          {/* Shutter Button - Pinned to Bottom Center */}
+          <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center pointer-events-auto">
+             <button
+               onClick={handleCapture}
+               className="
+                 w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
+                 shadow-2xl hover:scale-105 active:scale-95 transition-transform
+                 flex items-center justify-center
+               "
+               aria-label="Take Picture"
+             >
+               <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
+             </button>
+          </div>
 
-          {/* Exit Button: Fixed to Top Right */}
-          <button
-            onClick={() => {
-              if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-              setScannerState('idle');
-            }}
-            className="fixed top-8 right-6 z-[100] cursor-pointer p-3 bg-black/40 rounded-full text-white backdrop-blur-md"
-          >
-            <X size={24} />
-          </button>
+          {/* Exit Button - Pinned to Top Right */}
+          <div className="absolute top-12 right-6 z-20 pointer-events-auto">
+             <button
+                onClick={() => {
+                  if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+                  setScannerState('idle');
+                }}
+                className="p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors"
+             >
+                <X size={24} color="white" />
+             </button>
+          </div>
         </div>
       )}
 
-      {/* =======================================================================
-        REVIEW STATE
-        =======================================================================
-      */}
+
+      {/* --------------------------------------------------------------------------------
+         REVIEW STATE
+         -------------------------------------------------------------------------------- */}
       {scannerState === 'review' && capturedImage && (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
           <div className="flex-1 flex items-center justify-center p-4 bg-black">
             <img src={capturedImage} alt="Captured" className="max-w-full max-h-full object-contain" />
           </div>
           
-          {/* Review Controls Bar */}
-          <div className="bg-black/80 p-6 pb-10 flex gap-4 justify-center">
-            <Button 
-              onClick={handleRetake} 
-              className="flex-1 h-12 max-w-[160px] bg-white text-black hover:bg-gray-200 rounded-full font-semibold"
-            >
+          <div className="bg-black/80 p-6 pb-12 flex gap-4 justify-center">
+            <Button onClick={handleRetake} className="flex-1 h-12 max-w-[160px] bg-white text-black hover:bg-gray-200 rounded-full">
                <X className="mr-2 h-4 w-4" /> Retake
             </Button>
-            <Button 
-              onClick={handleUsePhoto} 
-              className="flex-1 h-12 max-w-[160px] bg-teal-600 text-white hover:bg-teal-700 rounded-full font-semibold"
-            >
+            <Button onClick={handleUsePhoto} className="flex-1 h-12 max-w-[160px] bg-teal-600 text-white hover:bg-teal-700 rounded-full">
                <Check className="mr-2 h-4 w-4" /> Use Photo
             </Button>
           </div>
         </div>
       )}
 
-      {/* =======================================================================
-        IDLE STATE (Dashboard)
-        =======================================================================
-      */}
+
+      {/* --------------------------------------------------------------------------------
+         IDLE STATE (Dashboard)
+         -------------------------------------------------------------------------------- */}
       {scannerState === 'idle' && (
         <>
           <div className="bg-gradient-to-r from-[#284995] to-[#1a3570] text-white p-4 shadow-md">
@@ -208,7 +198,6 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             {!scanned && !arMode && (
               <div className="w-full max-w-sm mt-8 space-y-8">
                 <div className="relative aspect-square bg-gray-800 rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center">
-                   {/* Fake Viewfinder Graphic */}
                    <div className="w-3/4 h-3/4 border-4 border-gray-600 rounded-2xl relative">
                       <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal-400 -mt-1 -ml-1"></div>
                       <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal-400 -mt-1 -mr-1"></div>

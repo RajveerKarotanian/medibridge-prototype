@@ -122,17 +122,37 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               ></div>
             </div>
             
-            {/* Shutter button - Positioned below the center frame */}
-            {/* Portrait: Below center frame, horizontally centered | Landscape: Right of center frame, vertically centered */}
+            {/* --- SHUTTER BUTTON FIX START --- */}
+            {/* Portrait: Bottom Center (Standard iOS) */}
+            {/* Landscape: Right Center (Standard iOS) */}
             <button
               onClick={handleCapture}
-              className="absolute left-1/2 -translate-x-1/2 bottom-[10%] landscape:bottom-auto landscape:left-auto landscape:right-[6%] landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-50 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
+              className="
+                absolute z-50 
+                w-20 h-20 sm:w-24 sm:h-24 
+                rounded-full bg-white border-[4px] border-gray-600 
+                shadow-2xl hover:scale-110 active:scale-95 transition-all
+                
+                /* PORTRAIT DEFAULT POSITIONS */
+                left-1/2 
+                -translate-x-1/2 
+                bottom-12 
+
+                /* LANDSCAPE OVERRIDES */
+                landscape:bottom-auto 
+                landscape:left-auto 
+                landscape:translate-x-0 
+                landscape:top-1/2 
+                landscape:-translate-y-1/2 
+                landscape:right-8
+              "
               aria-label="Capture photo"
             >
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-[3px] border-gray-600"></div>
               </div>
             </button>
+            {/* --- SHUTTER BUTTON FIX END --- */}
             
             {/* Instruction text with drop shadow */}
             <div className="absolute top-20 left-0 right-0 text-center z-10">

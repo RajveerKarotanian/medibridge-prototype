@@ -173,13 +173,13 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               </div>
             </div>
 
-            {/* Shutter button - Centered horizontally, fixed to bottom */}
+            {/* Shutter button */}
             <button
-              onClick={handleCapture}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-transform active:scale-95 shadow-lg"
-            >
-              <div className="w-16 h-16 rounded-full bg-white"></div>
-            </button>
+                  onClick={handleCapture}
+                  className="w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
+                >
+                  <div className="w-full h-full rounded-full bg-white"></div>
+                </button>
           </div>
         )}
 

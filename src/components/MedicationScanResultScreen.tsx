@@ -73,14 +73,21 @@ export function MedicationScanResultScreen({ onNavigate, medication }: Medicatio
               <p className="text-gray-600">{medicationData.dosage}</p>
             </div>
 
-            {/* RED ALERT - FIXED COLORS */}
-            {/* Changed bg-red-600 to hex code to force color */}
-            <div className="bg-[#DC2626] text-white rounded-xl p-5 shadow-lg border-4 border-[#991B1B]">
+            {/* RED ALERT - Liver Damage Warning */}
+            {/* Using inline styles to force the red background and white text */}
+            <div 
+              className="rounded-xl p-5 shadow-lg border-4"
+              style={{ 
+                backgroundColor: '#DC2626', 
+                borderColor: '#991B1B',
+                color: 'white'
+              }}
+            >
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1 text-white" />
+                <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1" style={{ color: 'white' }} />
                 <div>
-                  <p className="mb-2 font-bold text-white">LIVER DAMAGE WARNING</p>
-                  <p className="text-white/90">
+                  <p className="mb-2 font-bold" style={{ color: 'white' }}>LIVER DAMAGE WARNING</p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                     {medicationData.warnings}
                   </p>
                 </div>

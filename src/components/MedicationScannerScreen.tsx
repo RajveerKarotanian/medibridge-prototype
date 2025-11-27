@@ -122,6 +122,17 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               ></div>
             </div>
             
+            {/* Shutter button - Portrait: slightly below center frame, Landscape: to the right of center frame */}
+            <button
+              onClick={handleCapture}
+              className="absolute bottom-[12%] left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-[8%] landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-[60] w-24 h-24 min-w-[96px] min-h-[96px] rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
+              aria-label="Capture photo"
+            >
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
+                <div className="w-16 h-16 rounded-full border-[3px] border-gray-600"></div>
+              </div>
+            </button>
+            
             {/* Instruction text with drop shadow */}
             <div className="absolute top-20 left-0 right-0 text-center z-10">
               <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
@@ -136,19 +147,11 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 }
                 setScannerState('idle');
               }}
-              className="absolute top-8 right-6 z-50 p-3 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
+              className="absolute top-8 right-6 z-[60] p-3 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20"
             >
               <X className="w-6 h-6 text-white" />
             </button>
           </div>
-
-          {/* Shutter button - Lifted higher for mobile visibility */}
-          <button
-            onClick={handleCapture}
-            className="absolute bottom-24 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-[60] w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
-          >
-            <div className="w-full h-full rounded-full bg-white"></div>
-          </button>
         </div>
       )}
 

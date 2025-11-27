@@ -88,7 +88,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
   };
 
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden bg-[#EDEDED] relative">
+    <div className="flex flex-col h-full w-full bg-[#EDEDED] relative">
       {/* Camera State - Full Screen Overlay */}
       {scannerState === 'camera' && (
         <div className="fixed inset-0 h-[100dvh] w-full z-50 bg-black">
@@ -100,12 +100,12 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="w-full h-full object-cover"
           />
           
-          {/* Overlay Container (Pointer events none allows clicking through to video if needed, but we keep it layered) */}
+          {/* Overlay Container - Pointer events none so clicks pass through to buttons */}
           <div className="absolute inset-0 pointer-events-none">
-            {/* Focus cutout box */}
+            {/* Focus cutout box - REDUCED HEIGHT TO 50% TO MAKE ROOM FOR BUTTON */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div 
-                className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
+                className="relative w-3/4 h-[50%] border-2 border-white rounded-lg"
                 style={{
                   boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
                 }}
@@ -118,26 +118,25 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             </div>
           </div>
 
-          {/* --- FIXED SHUTTER BUTTON (Direct Child = Clickable) --- */}
-          {/* Positioning Logic:
-              - Fixed to viewport (guarantees visibility).
-              - Z-Index 100 (guarantees clickability).
-              - Bottom: 8% (Calculated to sit exactly in the gap below the 66% height frame).
+          {/* --- FIXED SHUTTER BUTTON --- */}
+          {/* 1. fixed: Ignores all containers.
+             2. z-[9999]: Sits on top of EVERYTHING.
+             3. bottom-20: High enough to clear phone nav bars, low enough to be below the 50% box.
           */}
           <button
             onClick={handleCapture}
             className="
-              fixed z-[100] cursor-pointer
+              fixed z-[9999] cursor-pointer pointer-events-auto
               w-20 h-20 sm:w-24 sm:h-24 
               rounded-full bg-white border-[4px] border-gray-600 
               shadow-2xl hover:scale-110 active:scale-95 transition-all
               
-              /* PORTRAIT: BOTTOM CENTER */
+              /* PORTRAIT: CENTERED, 80px FROM BOTTOM */
               left-1/2 
               -translate-x-1/2 
-              bottom-[8%]
+              bottom-20
 
-              /* LANDSCAPE: RIGHT CENTER */
+              /* LANDSCAPE: CENTERED VERTICALLY ON RIGHT */
               landscape:bottom-auto 
               landscape:left-auto 
               landscape:translate-x-0 
@@ -161,7 +160,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               }
               setScannerState('idle');
             }}
-            className="fixed top-8 right-6 z-[100] p-3 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20 cursor-pointer"
+            className="fixed top-8 right-6 z-[9999] p-3 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20 cursor-pointer pointer-events-auto"
           >
             <X className="w-6 h-6 text-white" />
           </button>

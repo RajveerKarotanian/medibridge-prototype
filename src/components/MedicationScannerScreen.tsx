@@ -315,52 +315,55 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
           </div>
         )}
 
-        {/* Scan Result Card */}
-        {scanned && (
+                {/* Scan Result Card */}
+                {scanned && (
           <div className="space-y-4 max-w-sm mx-auto">
-            <Card className="shadow-lg border-2 border-teal-200">
-              <CardHeader className="bg-gradient-to-r from-teal-50 to-blue-50">
-                <CardTitle className="flex items-center gap-2 text-teal-800">
-                  <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+            <Card className="bg-gradient-to-br from-teal-50 to-blue-50 border-2 border-teal-400 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-teal-800 flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center">
                     <svg
+                      xmlns="http://www.w3.org/2000/svg"
                       className="w-6 h-6 text-white"
                       fill="none"
-                      stroke="currentColor"
                       viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </div>
-                  Atorvastatin
+                  Tylenol Extra Strength
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
                 <div>
+                  <p className="text-teal-700 mb-1">Active Ingredient:</p>
+                  <p className="text-gray-700">Acetaminophen 500mg</p>
+                </div>
+
+                <div>
                   <p className="text-teal-700 mb-1">Purpose:</p>
-                  <p className="text-gray-700">Lowers cholesterol</p>
+                  <p className="text-gray-700">Pain relief and fever reduction</p>
                 </div>
 
                 <div>
                   <p className="text-teal-700 mb-1">Dosage:</p>
-                  <p className="text-gray-700">1 tablet daily</p>
+                  <p className="text-gray-700">2 tablets every 6 hours as needed</p>
                 </div>
 
                 <div>
-                  <p className="text-teal-700 mb-1">Side Effects:</p>
-                  <p className="text-gray-700">Possible muscle pain or fatigue</p>
+                  <p className="text-teal-700 mb-1">Common Side Effects:</p>
+                  <p className="text-gray-700">Generally minimal - nausea, allergic reaction (rare)</p>
                 </div>
 
-                <div className="bg-amber-50 border border-amber-300 rounded-lg p-3">
+                <div className="bg-red-50 border border-red-300 rounded-lg p-3">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-amber-900 mb-1">Warning:</p>
-                      <p className="text-amber-800">Avoid grapefruit juice</p>
+                      <p className="text-red-900 mb-1">Warning:</p>
+                      <p className="text-red-800">Do not exceed 6 tablets in 24 hours. Risk of liver damage with overdose. Avoid alcohol.</p>
                     </div>
                   </div>
                 </div>
@@ -377,17 +380,17 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               </Button>
               <Button
                 onClick={() => {
-                  // Create medication data object for Atorvastatin
+                  // Create medication data object for Tylenol Extra Strength
                   const medicationData = {
-                    name: 'Atorvastatin',
-                    dosage: '20mg Tablets',
-                    frequency: 'Once daily',
-                    time: '8:00 AM',
+                    name: 'Tylenol Extra Strength Rapid Release',
+                    dosage: 'Acetaminophen 500mg Tablets',
+                    frequency: 'Every 6 hours as needed',
+                    time: 'As needed',
                     status: 'Active',
-                    purpose: 'Lowers cholesterol and reduces risk of heart disease',
-                    sideEffects: 'Possible muscle pain, fatigue, headache',
-                    warnings: 'Avoid grapefruit juice while taking this medication',
-                    instructions: 'Take 1 tablet daily with or without food'
+                    purpose: 'Temporary relief of minor aches and pains, and to reduce fever',
+                    sideEffects: 'Nausea, allergic reaction (rash, itching, swelling), stomach pain',
+                    warnings: 'Do not exceed 6 tablets in 24 hours. Risk of severe liver damage with overdose. Avoid alcohol while using this product.',
+                    instructions: 'Take 2 tablets every 6 hours as needed. Do not take more than 6 tablets in 24 hours.'
                   };
                   onNavigate('scan-result', medicationData);
                 }}

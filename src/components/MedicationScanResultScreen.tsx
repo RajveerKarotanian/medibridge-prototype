@@ -11,24 +11,24 @@ interface MedicationScanResultScreenProps {
 }
 
 export function MedicationScanResultScreen({ onNavigate, medication }: MedicationScanResultScreenProps) {
-  // Use medication data if provided, otherwise use default Atorvastatin data
+  // Use medication data if provided, otherwise use default Tylenol data
   const medicationData = medication || {
-    name: 'Atorvastatin',
-    dosage: '20mg Tablets',
-    frequency: 'Once daily',
-    time: '8:00 AM',
+    name: 'Tylenol Extra Strength Rapid Release',
+    dosage: 'Acetaminophen 500mg Tablets',
+    frequency: 'Every 6 hours as needed',
+    time: 'As needed',
     status: 'Active',
-    purpose: 'Lowers cholesterol and reduces risk of heart disease',
-    sideEffects: 'Possible muscle pain, fatigue, headache',
-    warnings: 'Avoid grapefruit juice while taking this medication',
-    instructions: 'Take 1 tablet daily with or without food'
+    purpose: 'Temporary relief of minor aches and pains, and to reduce fever',
+    sideEffects: 'Nausea, allergic reaction (rash, itching, swelling), stomach pain',
+    warnings: 'Do not exceed 6 tablets in 24 hours. Risk of severe liver damage with overdose. Avoid alcohol while using this product.',
+    instructions: 'Take 2 tablets every 6 hours as needed. Do not take more than 6 tablets in 24 hours.'
   };
 
   const sideEffects = [
-    { name: 'Muscle Pain', icon: Activity, severity: 'common' },
-    { name: 'Fatigue', icon: Moon, severity: 'common' },
-    { name: 'Headache', icon: Thermometer, severity: 'uncommon' },
     { name: 'Nausea', icon: Droplets, severity: 'uncommon' },
+    { name: 'Allergic Reaction', icon: AlertTriangle, severity: 'rare' },
+    { name: 'Stomach Pain', icon: Activity, severity: 'uncommon' },
+    { name: 'Rash/Itching', icon: Thermometer, severity: 'rare' },
   ];
 
   return (
@@ -73,13 +73,13 @@ export function MedicationScanResultScreen({ onNavigate, medication }: Medicatio
               <p className="text-gray-600">{medicationData.dosage}</p>
             </div>
 
-            {/* RED ALERT - Interaction Warning */}
-            <div className="bg-amber-600 text-white rounded-xl p-5 shadow-lg border-4 border-amber-700">
+            {/* RED ALERT - Liver Damage Warning */}
+            <div className="bg-red-600 text-white rounded-xl p-5 shadow-lg border-4 border-red-700">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1" />
                 <div>
-                  <p className="mb-2">DIETARY WARNING</p>
-                  <p className="text-amber-100">
+                  <p className="mb-2">LIVER DAMAGE WARNING</p>
+                  <p className="text-red-100">
                     {medicationData.warnings}
                   </p>
                 </div>
@@ -87,35 +87,35 @@ export function MedicationScanResultScreen({ onNavigate, medication }: Medicatio
             </div>
 
             {/* Safety Status Section */}
-            <Card className="border-2 border-blue-300 bg-blue-50">
+            <Card className="border-2 border-amber-300 bg-amber-50">
               <CardContent className="p-5">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-amber-600 flex items-center justify-center">
                     <Activity className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <p className="text-blue-900">Safety Status</p>
-                    <p className="text-blue-700">Active Monitoring</p>
+                    <p className="text-amber-900">Safety Information</p>
+                    <p className="text-amber-700">Important Guidelines</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-600 mt-2"></div>
-                    <p className="text-blue-900 flex-1">
-                      Monitor cholesterol levels regularly
+                    <div className="w-2 h-2 rounded-full bg-amber-600 mt-2"></div>
+                    <p className="text-amber-900 flex-1">
+                      Do not take more than directed (maximum 6 tablets in 24 hours)
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-600 mt-2"></div>
-                    <p className="text-blue-900 flex-1">
-                      Report muscle pain or weakness immediately
+                    <div className="w-2 h-2 rounded-full bg-amber-600 mt-2"></div>
+                    <p className="text-amber-900 flex-1">
+                      Avoid alcohol consumption while taking this medication
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-600 mt-2"></div>
-                    <p className="text-blue-900 flex-1">
-                      Maintain consistent intake schedule
+                    <div className="w-2 h-2 rounded-full bg-amber-600 mt-2"></div>
+                    <p className="text-amber-900 flex-1">
+                      Consult doctor if pain persists for more than 10 days
                     </p>
                   </div>
                 </div>

@@ -21,7 +21,6 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Initialize camera when entering camera state
   useEffect(() => {
     if (scannerState === 'camera') {
       const startCamera = async () => {
@@ -101,16 +100,57 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="w-full h-full object-cover"
           />
           
-          {/* Overlay with transparent cutout */}
+          {/* Overlay Container */}
           <div className="absolute inset-0 pointer-events-none">
-            {/* Focus cutout box */}
+            
+            {/* 1. CENTER FRAME CONTAINER */}
             <div className="absolute inset-0 flex items-center justify-center">
+              
+              {/* 2. THE WHITE FRAME ITSELF */}
+              {/* We make this pointer-events-auto so buttons inside it are clickable if needed */}
               <div 
-                className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
+                className="relative w-3/4 h-2/3 border-2 border-white rounded-lg pointer-events-auto"
                 style={{
                   boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
                 }}
-              ></div>
+              >
+                
+                {/* --- SHUTTER BUTTON (NESTED HERE) --- */}
+                {/* Because it is nested inside the frame div, 
+                   "-bottom-24" puts it exactly below the white line.
+                */}
+                <button
+                  onClick={handleCapture}
+                  className="
+                    /* BASE STYLES */
+                    absolute z-[100] cursor-pointer
+                    w-20 h-20 sm:w-24 sm:h-24 
+                    rounded-full bg-white border-[4px] border-gray-600 
+                    shadow-2xl hover:scale-110 active:scale-95 transition-all
+                    
+                    /* PORTRAIT: RELATIVE TO FRAME */
+                    left-1/2 
+                    -translate-x-1/2 
+                    -bottom-24   /* Pushes it OUT of the box, below the line */
+
+                    /* LANDSCAPE: FIXED TO SCREEN (To avoid getting cut off) */
+                    landscape:fixed
+                    landscape:bottom-auto 
+                    landscape:left-auto 
+                    landscape:translate-x-0 
+                    landscape:top-1/2 
+                    landscape:-translate-y-1/2 
+                    landscape:right-8
+                  "
+                  aria-label="Capture photo"
+                >
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-[3px] border-gray-600"></div>
+                  </div>
+                </button>
+                {/* --- END SHUTTER BUTTON --- */}
+
+              </div>
             </div>
             
             {/* Instruction text */}
@@ -118,36 +158,6 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
             </div>
           </div>
-
-          {/* --- FIXED SHUTTER BUTTON --- */}
-          {/* pointer-events-auto ensures it's clickable even if overlay is above it */}
-          <button
-            onClick={handleCapture}
-            className="
-              fixed z-[100] cursor-pointer pointer-events-auto
-              w-20 h-20 sm:w-24 sm:h-24 
-              rounded-full bg-white border-[4px] border-gray-600 
-              shadow-2xl hover:scale-110 active:scale-95 transition-all
-              
-              /* PORTRAIT: BOTTOM CENTER */
-              left-1/2 
-              -translate-x-1/2 
-              bottom-12 
-
-              /* LANDSCAPE: RIGHT CENTER */
-              landscape:bottom-auto 
-              landscape:left-auto 
-              landscape:translate-x-0 
-              landscape:top-1/2 
-              landscape:-translate-y-1/2 
-              landscape:right-8
-            "
-            aria-label="Capture photo"
-          >
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-[3px] border-gray-600"></div>
-            </div>
-          </button>
 
           {/* Exit button */}
           <button
@@ -158,7 +168,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               }
               setScannerState('idle');
             }}
-            className="fixed top-8 right-6 z-[100] p-3 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20 cursor-pointer pointer-events-auto"
+            className="fixed top-8 right-6 z-[100] p-3 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20 cursor-pointer"
           >
             <X className="w-6 h-6 text-white" />
           </button>

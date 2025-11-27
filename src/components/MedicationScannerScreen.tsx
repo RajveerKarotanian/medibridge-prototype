@@ -122,10 +122,10 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               ></div>
             </div>
             
-            {/* Shutter button - Positioned below center frame in portrait, to the right in landscape */}
+            {/* Shutter button - iOS Camera style positioning */}
             <button
               onClick={handleCapture}
-              className="absolute left-1/2 -translate-x-1/2 bottom-[15%] landscape:bottom-auto landscape:left-auto landscape:right-[8%] landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-[60] w-24 h-24 min-w-[96px] min-h-[96px] rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
+              className="fixed bottom-8 left-1/2 -translate-x-1/2 landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2 z-50 w-24 h-24 min-w-[96px] min-h-[96px] rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
               aria-label="Capture photo"
             >
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">

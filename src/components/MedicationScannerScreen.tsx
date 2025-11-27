@@ -112,28 +112,26 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
           
           {/* Overlay with transparent cutout - Focus Cutout effect */}
           <div className="absolute inset-0">
-            {/* Focus cutout box with massive border technique and button positioning */}
+            {/* Focus cutout box with massive border technique */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative flex flex-col items-center">
-                <div 
-                  className="w-3/4 h-2/3 border-2 border-white rounded-lg"
-                  style={{
-                    boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
-                  }}
-                ></div>
-                
-                {/* Shutter button - Centered below the center frame */}
-                <button
-                  onClick={handleCapture}
-                  className="mt-8 landscape:mt-0 landscape:ml-8 landscape:absolute landscape:left-full landscape:top-1/2 landscape:-translate-y-1/2 z-[60] w-24 h-24 min-w-[96px] min-h-[96px] rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
-                  aria-label="Capture photo"
-                >
-                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
-                    <div className="w-16 h-16 rounded-full border-[3px] border-gray-600"></div>
-                  </div>
-                </button>
-              </div>
+              <div 
+                className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
+                style={{
+                  boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.5)'
+                }}
+              ></div>
             </div>
+            
+            {/* Shutter button - Positioned below center frame in portrait, to the right in landscape */}
+            <button
+              onClick={handleCapture}
+              className="absolute left-1/2 -translate-x-1/2 bottom-[15%] landscape:bottom-auto landscape:left-auto landscape:right-[8%] landscape:top-1/2 landscape:translate-x-0 landscape:-translate-y-1/2 z-[60] w-24 h-24 min-w-[96px] min-h-[96px] rounded-full bg-white border-[4px] border-gray-600 hover:scale-110 active:scale-95 transition-all shadow-2xl"
+              aria-label="Capture photo"
+            >
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-inner ring-2 ring-gray-300">
+                <div className="w-16 h-16 rounded-full border-[3px] border-gray-600"></div>
+              </div>
+            </button>
             
             {/* Instruction text with drop shadow */}
             <div className="absolute top-20 left-0 right-0 text-center z-10">

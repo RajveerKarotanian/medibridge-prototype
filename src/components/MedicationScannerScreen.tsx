@@ -100,59 +100,65 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
-          {/* LAYER 2: DARK OVERLAY (Semi-transparent background) */}
-          <div className="absolute inset-0 bg-black/30 z-10 pointer-events-none"></div>
-
-          {/* LAYER 3: THE FRAME (Centered Exactly) */}
-          {/* fixed top-1/2 left-1/2 guarantees it is in the middle of the screen */}
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
-            {/* The White Box */}
-            <div className="relative w-72 h-72 border-[4px] border-white rounded-xl shadow-2xl">
-               {/* Corner Markers */}
-               <div className="absolute top-0 left-0 w-8 h-8 border-t-[6px] border-l-[6px] border-white -mt-[4px] -ml-[4px]"></div>
-               <div className="absolute top-0 right-0 w-8 h-8 border-t-[6px] border-r-[6px] border-white -mt-[4px] -mr-[4px]"></div>
-               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[6px] border-l-[6px] border-white -mb-[4px] -ml-[4px]"></div>
-               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[6px] border-r-[6px] border-white -mb-[4px] -mr-[4px]"></div>
-            </div>
-          </div>
+          {/* LAYER 2: LAYOUT GRID (The robust structure) */}
+          {/* This flex container fills the screen. 
+              Portrait: Column (Top Text, Middle Frame, Bottom Button).
+              Landscape: Row (Left Frame, Right Button). 
+          */}
+          <div className="absolute inset-0 z-10 flex flex-col landscape:flex-row pointer-events-none">
             
-          {/* LAYER 4: TEXT (Fixed to Top) */}
-          <div className="fixed top-28 left-0 right-0 flex justify-center z-30 pointer-events-none">
-             <p className="text-white text-lg font-bold drop-shadow-md tracking-wide bg-black/40 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">
-                Position medication in frame
-             </p>
+            {/* SECTION A: TOP BAR (Text & Exit) */}
+            <div className="relative h-24 w-full landscape:h-full landscape:w-24 flex items-center justify-center bg-gradient-to-b from-black/60 to-transparent landscape:bg-gradient-to-r">
+               {/* Text */}
+               <div className="mt-4 landscape:mt-0 landscape:-rotate-90">
+                 <p className="text-white font-bold drop-shadow-md bg-black/30 px-4 py-1 rounded-full backdrop-blur-md whitespace-nowrap">
+                    Position medication in frame
+                 </p>
+               </div>
+
+               {/* Exit Button (Top Right in Portrait) */}
+               <div className="absolute top-6 right-6 pointer-events-auto">
+                 <button
+                    onClick={() => {
+                      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+                      setScannerState('idle');
+                    }}
+                    className="p-2 bg-black/40 rounded-full text-white backdrop-blur-md border border-white/20"
+                 >
+                    <X size={24} />
+                 </button>
+               </div>
+            </div>
+
+            {/* SECTION B: MIDDLE (The Frame) */}
+            <div className="flex-1 flex items-center justify-center p-4">
+               {/* The White Box - Hardcoded dimensions prevent collapse */}
+               <div className="relative w-64 h-64 sm:w-80 sm:h-80 border-[4px] border-white rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                 {/* Corner Markers */}
+                 <div className="absolute top-0 left-0 w-8 h-8 border-t-[6px] border-l-[6px] border-white -mt-[4px] -ml-[4px]"></div>
+                 <div className="absolute top-0 right-0 w-8 h-8 border-t-[6px] border-r-[6px] border-white -mt-[4px] -mr-[4px]"></div>
+                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[6px] border-l-[6px] border-white -mb-[4px] -ml-[4px]"></div>
+                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[6px] border-r-[6px] border-white -mb-[4px] -mr-[4px]"></div>
+               </div>
+            </div>
+
+            {/* SECTION C: BOTTOM BAR (The Button) */}
+            {/* Portrait: Height 32 (Footer). Landscape: Width 32 (Sidebar on Right). */}
+            <div className="h-32 w-full landscape:h-full landscape:w-32 flex items-center justify-center bg-gradient-to-t from-black/60 to-transparent landscape:bg-gradient-to-l pointer-events-auto">
+               <button
+                  onClick={handleCapture}
+                  className="
+                    w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
+                    shadow-xl hover:scale-105 active:scale-95 transition-transform
+                    flex items-center justify-center cursor-pointer
+                  "
+                  aria-label="Take Picture"
+               >
+                 <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
+               </button>
+            </div>
+
           </div>
-
-          {/* LAYER 5: SHUTTER BUTTON (Fixed to Bottom) */}
-          {/* fixed bottom-16 guarantees it stays at the bottom */}
-          <button
-            onClick={handleCapture}
-            className="
-              fixed z-50 cursor-pointer pointer-events-auto
-              bottom-16 left-1/2 -translate-x-1/2
-              w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
-              shadow-[0_0_20px_rgba(0,0,0,0.5)] 
-              hover:scale-105 active:scale-95 transition-transform
-              flex items-center justify-center
-              
-              /* Landscape Support */
-              landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2
-            "
-            aria-label="Take Picture"
-          >
-            <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
-          </button>
-
-          {/* LAYER 6: EXIT BUTTON (Fixed to Top Right) */}
-          <button
-            onClick={() => {
-              if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-              setScannerState('idle');
-            }}
-            className="fixed top-12 right-6 z-50 cursor-pointer p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors border border-white/20"
-          >
-            <X size={24} color="white" />
-          </button>
         </div>
       )}
 

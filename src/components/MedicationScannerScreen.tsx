@@ -92,70 +92,67 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
       {scannerState === 'camera' && (
         <div className="fixed inset-0 z-[9999] bg-black">
           
-          {/* LAYER 1: VIDEO */}
+          {/* LAYER 1: VIDEO (Background) */}
           <video
             ref={videoRef}
             autoPlay
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
-          {/* LAYER 2: THE FRAME & TEXT (Pointer Events None) */}
-          <div className="absolute inset-0 pointer-events-none z-10">
+          {/* LAYER 2: DARK OVERLAY (Semi-transparent background) */}
+          <div className="absolute inset-0 bg-black/30 z-10 pointer-events-none"></div>
+
+          {/* LAYER 3: THE FRAME (Centered Exactly) */}
+          {/* fixed top-1/2 left-1/2 guarantees it is in the middle of the screen */}
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+            {/* The White Box */}
+            <div className="relative w-72 h-72 border-[4px] border-white rounded-xl shadow-2xl">
+               {/* Corner Markers */}
+               <div className="absolute top-0 left-0 w-8 h-8 border-t-[6px] border-l-[6px] border-white -mt-[4px] -ml-[4px]"></div>
+               <div className="absolute top-0 right-0 w-8 h-8 border-t-[6px] border-r-[6px] border-white -mt-[4px] -mr-[4px]"></div>
+               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[6px] border-l-[6px] border-white -mb-[4px] -ml-[4px]"></div>
+               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[6px] border-r-[6px] border-white -mb-[4px] -mr-[4px]"></div>
+            </div>
+          </div>
             
-            {/* TEXT: Moved to Top (Top-28 is roughly below the notch area) */}
-            <div className="absolute top-28 left-0 right-0 flex justify-center z-20">
-               <p className="text-white text-lg font-bold drop-shadow-lg tracking-wide bg-black/30 px-6 py-2 rounded-full backdrop-blur-md">
-                  Position medication in frame
-               </p>
-            </div>
-
-            {/* THE FRAME: Centered in Screen */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Hardcoded w-72 ensures it never collapses. 
-                  Border-4 ensures visibility on Retina screens. */}
-              <div className="relative w-72 h-72 border-[4px] border-white rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-                 
-                 {/* CORNER MARKERS: Changed to White */}
-                 <div className="absolute top-0 left-0 w-8 h-8 border-t-[4px] border-l-[4px] border-white -mt-[4px] -ml-[4px]"></div>
-                 <div className="absolute top-0 right-0 w-8 h-8 border-t-[4px] border-r-[4px] border-white -mt-[4px] -mr-[4px]"></div>
-                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[4px] border-l-[4px] border-white -mb-[4px] -ml-[4px]"></div>
-                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[4px] border-r-[4px] border-white -mb-[4px] -mr-[4px]"></div>
-              </div>
-            </div>
+          {/* LAYER 4: TEXT (Fixed to Top) */}
+          <div className="fixed top-28 left-0 right-0 flex justify-center z-30 pointer-events-none">
+             <p className="text-white text-lg font-bold drop-shadow-md tracking-wide bg-black/40 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">
+                Position medication in frame
+             </p>
           </div>
 
-          {/* LAYER 3: CONTROLS (Direct Children, Clickable) */}
-          
-          {/* SHUTTER BUTTON: Pinned to Bottom Center */}
-          <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center pointer-events-auto">
-             <button
-               onClick={handleCapture}
-               className="
-                 w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
-                 shadow-2xl hover:scale-105 active:scale-95 transition-transform
-                 flex items-center justify-center
-                 /* Landscape Override: Move to right */
-                 landscape:fixed landscape:bottom-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2
-               "
-               aria-label="Take Picture"
-             >
-               <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
-             </button>
-          </div>
+          {/* LAYER 5: SHUTTER BUTTON (Fixed to Bottom) */}
+          {/* fixed bottom-16 guarantees it stays at the bottom */}
+          <button
+            onClick={handleCapture}
+            className="
+              fixed z-50 cursor-pointer pointer-events-auto
+              bottom-16 left-1/2 -translate-x-1/2
+              w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
+              shadow-[0_0_20px_rgba(0,0,0,0.5)] 
+              hover:scale-105 active:scale-95 transition-transform
+              flex items-center justify-center
+              
+              /* Landscape Support */
+              landscape:bottom-auto landscape:left-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2
+            "
+            aria-label="Take Picture"
+          >
+            <div className="w-16 h-16 rounded-full border-[2px] border-black/10"></div>
+          </button>
 
-          {/* EXIT BUTTON: Pinned to Top Right */}
-          <div className="absolute top-12 right-6 z-20 pointer-events-auto">
-             <button
-                onClick={() => {
-                  if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-                  setScannerState('idle');
-                }}
-                className="p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors border border-white/20"
-             >
-                <X size={24} color="white" />
-             </button>
-          </div>
+          {/* LAYER 6: EXIT BUTTON (Fixed to Top Right) */}
+          <button
+            onClick={() => {
+              if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+              setScannerState('idle');
+            }}
+            className="fixed top-12 right-6 z-50 cursor-pointer p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors border border-white/20"
+          >
+            <X size={24} color="white" />
+          </button>
         </div>
       )}
 

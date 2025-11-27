@@ -131,7 +131,7 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
         {/* Camera State - Live Camera View */}
         {scannerState === 'camera' && (
           <div className="fixed inset-0 bg-black z-50 h-[100dvh] w-full overflow-hidden">
-            {/* Video Element */}
+            {/* 1. Video Layer */}
             <div className="absolute inset-0">
               <video
                 ref={videoRef}
@@ -140,9 +140,9 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                 className="w-full h-full object-cover"
               />
               
-              {/* Overlay with transparent cutout - Focus Cutout effect */}
-              <div className="absolute inset-0">
-                {/* Focus cutout box with massive border technique */}
+              {/* 2. Overlay Layer (Focus Box & Text) */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Focus cutout box */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div 
                     className="relative w-3/4 h-2/3 border-2 border-white rounded-lg"
@@ -152,12 +152,12 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                   ></div>
                 </div>
                 
-                {/* Instruction text with drop shadow */}
+                {/* Instruction text */}
                 <div className="absolute top-20 left-0 right-0 text-center z-10">
                   <p className="text-white text-lg font-medium drop-shadow-lg">Position medication label in frame</p>
                 </div>
 
-                {/* Exit button - Top right corner */}
+                {/* Exit button - Note: pointer-events-auto added so it stays clickable */}
                 <button
                   onClick={() => {
                     if (streamRef.current) {
@@ -166,20 +166,22 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                     }
                     setScannerState('idle');
                   }}
-                  className="absolute top-4 right-4 z-50 w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm"
+                  className="absolute top-4 right-4 z-50 w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-sm pointer-events-auto"
                 >
                   <X className="w-6 h-6 text-white" />
                 </button>
               </div>
             </div>
 
-            {/* Shutter button */}
-            <button
-                  onClick={handleCapture}
-                  className="w-20 h-20 rounded-full bg-white border-4 border-gray-300 hover:scale-105 transition-transform shadow-lg"
-                >
-                  <div className="w-full h-full rounded-full bg-white"></div>
-                </button>
+            {/* 3. Controls Layer (Shutter Button) - Independent of video/overlay divs */}
+            <div className="absolute bottom-12 left-0 right-0 z-50 flex justify-center pointer-events-none">
+              <button
+                onClick={handleCapture}
+                className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-transform active:scale-95 shadow-lg pointer-events-auto"
+              >
+                <div className="w-16 h-16 rounded-full bg-white"></div>
+              </button>
+            </div>
           </div>
         )}
 

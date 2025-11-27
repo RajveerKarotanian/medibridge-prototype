@@ -173,21 +173,10 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
               </div>
             </div>
 
-            {/* Shutter button - iOS Style Positioning */}
+            {/* Shutter button - Centered horizontally, fixed to bottom */}
             <button
               onClick={handleCapture}
-              className="
-                absolute
-                left-1/2 
-                -translate-x-1/2
-                z-50
-                w-20 h-20
-                rounded-full
-                border-4 border-white
-                flex items-center justify-center
-                transition-transform active:scale-95
-                bottom-[calc(env(safe-area-inset-bottom)+6vh)]
-              "
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-transform active:scale-95 shadow-lg"
             >
               <div className="w-16 h-16 rounded-full bg-white"></div>
             </button>

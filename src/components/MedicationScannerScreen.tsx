@@ -100,28 +100,34 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-          {/* LAYER 2: THE FRAME (Centered using Flexbox, Overlay created by Shadow) */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-            {/* The Frame Box - Hardcoded w-72 ensures it never collapses */}
-            <div className="relative w-72 h-72 border-2 border-white/50 rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-               {/* Teal Corner Markers */}
-               <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal-500 -mt-[2px] -ml-[2px]"></div>
-               <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal-500 -mt-[2px] -mr-[2px]"></div>
-               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-teal-500 -mb-[2px] -ml-[2px]"></div>
-               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-teal-500 -mb-[2px] -mr-[2px]"></div>
-            </div>
+          {/* LAYER 2: THE FRAME & TEXT (Pointer Events None) */}
+          <div className="absolute inset-0 pointer-events-none z-10">
             
-            {/* Text - Pushed down by margin to sit under the frame */}
-            <div className="mt-8">
-               <p className="text-white text-lg font-bold drop-shadow-md tracking-wide bg-black/20 px-4 py-1 rounded-full">
+            {/* TEXT: Moved to Top (Top-28 is roughly below the notch area) */}
+            <div className="absolute top-28 left-0 right-0 flex justify-center z-20">
+               <p className="text-white text-lg font-bold drop-shadow-lg tracking-wide bg-black/30 px-6 py-2 rounded-full backdrop-blur-md">
                   Position medication in frame
                </p>
             </div>
+
+            {/* THE FRAME: Centered in Screen */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Hardcoded w-72 ensures it never collapses. 
+                  Border-4 ensures visibility on Retina screens. */}
+              <div className="relative w-72 h-72 border-[4px] border-white rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                 
+                 {/* CORNER MARKERS: Changed to White */}
+                 <div className="absolute top-0 left-0 w-8 h-8 border-t-[4px] border-l-[4px] border-white -mt-[4px] -ml-[4px]"></div>
+                 <div className="absolute top-0 right-0 w-8 h-8 border-t-[4px] border-r-[4px] border-white -mt-[4px] -mr-[4px]"></div>
+                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[4px] border-l-[4px] border-white -mb-[4px] -ml-[4px]"></div>
+                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[4px] border-r-[4px] border-white -mb-[4px] -mr-[4px]"></div>
+              </div>
+            </div>
           </div>
 
-          {/* LAYER 3: CONTROLS (Pinned to edges, outside the flex layout) */}
+          {/* LAYER 3: CONTROLS (Direct Children, Clickable) */}
           
-          {/* Shutter Button - Pinned to Bottom Center */}
+          {/* SHUTTER BUTTON: Pinned to Bottom Center */}
           <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center pointer-events-auto">
              <button
                onClick={handleCapture}
@@ -129,6 +135,8 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
                  w-20 h-20 rounded-full bg-white border-[4px] border-gray-400 
                  shadow-2xl hover:scale-105 active:scale-95 transition-transform
                  flex items-center justify-center
+                 /* Landscape Override: Move to right */
+                 landscape:fixed landscape:bottom-auto landscape:right-8 landscape:top-1/2 landscape:-translate-y-1/2
                "
                aria-label="Take Picture"
              >
@@ -136,14 +144,14 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
              </button>
           </div>
 
-          {/* Exit Button - Pinned to Top Right */}
+          {/* EXIT BUTTON: Pinned to Top Right */}
           <div className="absolute top-12 right-6 z-20 pointer-events-auto">
              <button
                 onClick={() => {
                   if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
                   setScannerState('idle');
                 }}
-                className="p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors"
+                className="p-3 bg-black/40 rounded-full text-white backdrop-blur-md hover:bg-black/60 transition-colors border border-white/20"
              >
                 <X size={24} color="white" />
              </button>
@@ -162,10 +170,10 @@ export function MedicationScannerScreen({ onNavigate }: MedicationScannerScreenP
           </div>
           
           <div className="bg-black/80 p-6 pb-12 flex gap-4 justify-center">
-            <Button onClick={handleRetake} className="flex-1 h-12 max-w-[160px] bg-white text-black hover:bg-gray-200 rounded-full">
+            <Button onClick={handleRetake} className="flex-1 h-12 max-w-[160px] bg-white text-black hover:bg-gray-200 rounded-full font-bold">
                <X className="mr-2 h-4 w-4" /> Retake
             </Button>
-            <Button onClick={handleUsePhoto} className="flex-1 h-12 max-w-[160px] bg-teal-600 text-white hover:bg-teal-700 rounded-full">
+            <Button onClick={handleUsePhoto} className="flex-1 h-12 max-w-[160px] bg-teal-600 text-white hover:bg-teal-700 rounded-full font-bold">
                <Check className="mr-2 h-4 w-4" /> Use Photo
             </Button>
           </div>
